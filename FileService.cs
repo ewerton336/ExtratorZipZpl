@@ -88,7 +88,7 @@ namespace ExtratorZipZpl
             string directory = Path.GetDirectoryName(filePath);
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             string fileExtension = Path.GetExtension(filePath);
-            string newFileName = GetUniqueFileName(directoryOutTxtEtiqueta, fileName + fileExtension);
+            string newFileName = GetUniqueFileName(directory, fileName + fileExtension);
             return Path.Combine(directory, newFileName);
         }
 
