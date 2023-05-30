@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using ExtratorZipZpl;
 
 namespace FileExtractor
 {
@@ -13,93 +6,37 @@ namespace FileExtractor
     {
         static async Task Main(string[] args)
         {
-            // Carrega as configurações do arquivo appsettings.json
-            IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            // Obtém o caminho do diretório de entrada e saída
-            string directoryIn = configuration.GetSection("DirectoryIn").Value;
-            string directoryOut = configuration.GetSection("DirectoryOut").Value;
-            int intervaloExecucao = configuration.GetValue<int>("IntervaloExecucao");
-
-            if (string.IsNullOrEmpty(directoryIn) || string.IsNullOrEmpty(directoryOut) || intervaloExecucao == 0)
-            {
-                Console.WriteLine("Configurações inválidas. Verifique as configurações em appsettings.json.");
-                return;
-            }
-
-            // Cria o diretório "extraídos" dentro do diretório de saída
-            string extractedFolderPath = Path.Combine(directoryOut, "extraídos");
-            Directory.CreateDirectory(extractedFolderPath);
-
-            Console.WriteLine("Aguardando novos arquivos .zip...");
-
-            // Loop contínuo para verificar novos arquivos .zip
+            var fileService = new FileService();
             while (true)
             {
-                // Obtém todos os arquivos no diretório de entrada com extensão .zip e contendo a palavra "ZPL" no nome
-                IEnumerable<string> files = Directory.EnumerateFiles(directoryIn, "*.zip", SearchOption.AllDirectories)
-                    .Where(file => Path.GetFileName(file).IndexOf("ZPL", StringComparison.OrdinalIgnoreCase) >= 0);
-
-                foreach (string file in files)
+                try
                 {
-                    Console.WriteLine($"Extraindo arquivo: {file}");
+                    Console.WriteLine("Aguardando novos arquivos .zip...");
 
-                    try
+                    while (true)
                     {
-                        // Extrai o arquivo para o diretório temporário
-                        string tempFolderPath = Path.Combine(directoryOut, "temp");
-                        ZipFile.ExtractToDirectory(file, tempFolderPath);
-                        Console.WriteLine("Extração concluída com sucesso.");
-
-                        // Obtém todos os arquivos .txt dentro do diretório temporário
-                        string[] txtFiles = Directory.GetFiles(tempFolderPath, "*.txt", SearchOption.AllDirectories);
-
-                        foreach (string txtFile in txtFiles)
+                        try
                         {
-                            string relativePath = Path.GetRelativePath(tempFolderPath, txtFile);
-                            string destinationFilePath = Path.Combine(directoryOut, relativePath);
+                            IEnumerable<string> files = fileService.GetZipFilesToExtract();
 
-                            // Verifica se o arquivo já existe no diretório de saída
-                            if (File.Exists(destinationFilePath))
+                            foreach (string file in files)
                             {
-                                string fileName = Path.GetFileNameWithoutExtension(destinationFilePath);
-                                string fileExtension = Path.GetExtension(destinationFilePath);
-                                string newFileName = GetUniqueFileName(fileName, fileExtension);
-                                string newFilePath = Path.Combine(directoryOut, newFileName);
-                                File.Move(txtFile, newFilePath);
-                                Console.WriteLine($"Arquivo movido para o diretório de saída com o nome '{newFileName}'.");
-                            }
-                            else
-                            {
-                                File.Move(txtFile, destinationFilePath);
-                                Console.WriteLine($"Arquivo movido para o diretório de saída com o nome '{Path.GetFileName(destinationFilePath)}'.");
+                                Console.WriteLine($"Extraindo arquivo: {file}");
+                                await fileService.ExtractAndMoveFilesAsync(file);
                             }
                         }
-
-                        // Move o arquivo .zip para a pasta "extraídos"
-                        string zipDestinationFilePath = Path.Combine(extractedFolderPath, Path.GetFileName(file));
-                        File.Move(file, zipDestinationFilePath);
-                        Console.WriteLine($"Arquivo ZIP movido para a pasta 'extraídos' com o nome '{Path.GetFileName(zipDestinationFilePath)}'.");
-
-                        // Exclui o diretório temporário
-                        Directory.Delete(tempFolderPath, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Erro ao extrair arquivo: {ex.Message}");
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Erro ao extrair arquivo: {ex.Message}");
+                        }
                     }
                 }
-                await Task.Delay(intervaloExecucao);
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao extrair arquivo: {ex.Message}");
+                }
             }
-        }
-
-        static string GetUniqueFileName(string fileName, string fileExtension)
-        {
-            string newFileName = $"{fileName} ({Guid.NewGuid()}){fileExtension}";
-            return newFileName;
         }
     }
 }
+
