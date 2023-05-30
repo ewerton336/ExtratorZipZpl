@@ -1,42 +1,24 @@
-﻿using ExtratorZipZpl;
+﻿using Microsoft.Extensions.Configuration;
 
-namespace FileExtractor
+namespace ExtratorZipZpl
 {
     class Program
     {
         static async Task Main(string[] args)
         {
-            var fileService = new FileService();
+            FileService fileService = new FileService();
+
             while (true)
             {
-                try
-                {
-                    Console.WriteLine("Aguardando novos arquivos .zip...");
+                IEnumerable<string> zipFiles = fileService.GetZipFilesToExtract();
 
-                    while (true)
-                    {
-                        try
-                        {
-                            IEnumerable<string> files = fileService.GetZipFilesToExtract();
-
-                            foreach (string file in files)
-                            {
-                                Console.WriteLine($"Extraindo arquivo: {file}");
-                                await fileService.ExtractAndMoveFilesAsync(file);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Erro ao extrair arquivo: {ex.Message}");
-                        }
-                    }
-                }
-                catch (Exception ex)
+                foreach (string zipFile in zipFiles)
                 {
-                    Console.WriteLine($"Erro ao extrair arquivo: {ex.Message}");
+                    await fileService.ExtractAndMoveFilesAsync(zipFile);
                 }
+
+                await Task.Delay(1000); // Aguarda 1 segundo antes de verificar novamente
             }
         }
     }
 }
-

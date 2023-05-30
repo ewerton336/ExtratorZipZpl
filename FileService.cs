@@ -68,8 +68,7 @@ namespace ExtratorZipZpl
             Console.WriteLine($"Arquivo ZIP movido para a pasta 'extraídos' com o nome '{Path.GetFileName(zipDestinationFilePath)}'.");
 
             ClearDirectory(tempFolderPath);
-
-            Task.Delay(intervaloExecucao).Wait();
+            await Task.Delay(intervaloExecucao);
         }
 
         public async Task MoveFileAsync(string sourceFilePath, string destinationFilePath)
@@ -79,7 +78,9 @@ namespace ExtratorZipZpl
 
         public void MoveFile(string sourceFilePath, string destinationFilePath)
         {
-            File.Move(sourceFilePath, destinationFilePath);
+            string newFilePath = GetUniqueFilePath(destinationFilePath);
+            File.Copy(sourceFilePath, newFilePath);
+            File.Delete(sourceFilePath);
         }
 
         public string GetUniqueFilePath(string filePath)
@@ -87,21 +88,23 @@ namespace ExtratorZipZpl
             string directory = Path.GetDirectoryName(filePath);
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             string fileExtension = Path.GetExtension(filePath);
-            string newFileName = GetUniqueFileName(directoryOutTxtEtiqueta,fileName);
-            return Path.Combine(directory, newFileName + fileExtension);
+            string newFileName = GetUniqueFileName(directoryOutTxtEtiqueta, fileName + fileExtension);
+            return Path.Combine(directory, newFileName);
         }
+
 
         private string GetUniqueFileName(string directory, string fileName)
         {
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             string fileExtension = Path.GetExtension(fileName);
-            string newFileName = fileName;
+            string newFileName = Path.Combine(directory, fileName);
 
             int counter = 2;
 
             while (File.Exists(newFileName))
             {
-                newFileName = Path.Combine(directory, $"{fileNameWithoutExtension} ({counter}){fileExtension}");
+                string newFileNameWithoutExtension = $"{fileNameWithoutExtension} ({counter})";
+                newFileName = Path.Combine(directory, $"{newFileNameWithoutExtension}{fileExtension}");
                 counter++;
             }
 
