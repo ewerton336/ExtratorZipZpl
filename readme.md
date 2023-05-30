@@ -1,30 +1,30 @@
 # File Extractor
 
-Este È um programa de console desenvolvido em C# que realiza a extraÁ„o de arquivos .zip. O programa monitora um diretÛrio especificado em `appsettings.json` em busca de arquivos .zip contendo a palavra "ZPL" no nome. Ao encontrar um arquivo compatÌvel, ele È extraÌdo para um diretÛrio tempor·rio, e os arquivos .txt presentes dentro do arquivo .zip s„o movidos para um diretÛrio de saÌda especificado. O arquivo .zip original È movido para uma pasta "extraÌdos" dentro do diretÛrio de saÌda.
+Este √© um programa de console desenvolvido em C# que realiza a extra√ß√£o de arquivos .zip. O programa monitora um diret√≥rio especificado em `appsettings.json` em busca de arquivos .zip contendo a palavra "ZPL" no nome. Ao encontrar um arquivo compat√≠vel, ele √© extra√≠do para um diret√≥rio tempor√°rio, e os arquivos .txt presentes dentro do arquivo .zip s√£o movidos para um diret√≥rio de sa√≠da especificado. O arquivo .zip original √© movido para uma pasta "extra√≠dos" dentro do diret√≥rio de sa√≠da.
 
-## ConfiguraÁıes
+## Configura√ß√µes
 
-As configuraÁıes do programa s„o definidas no arquivo `appsettings.json`. As seguintes configuraÁıes est„o disponÌveis:
+As configura√ß√µes do programa s√£o definidas no arquivo `appsettings.json`. As seguintes configura√ß√µes est√£o dispon√≠veis:
 
 ```json
 {
-  "DirectoryIn": "Caminho/Para/DiretÛrio/De/Entrada",
-  "DirectoryOut": "Caminho/Para/DiretÛrio/De/SaÌda",
+  "DirectoryIn": "Caminho/Para/Diret√≥rio/De/Entrada",
+  "DirectoryOut": "Caminho/Para/Diret√≥rio/De/Sa√≠da",
   "IntervaloExecucao": 5000
 }
+```
 
-
-- `DirectoryIn`: O caminho para o diretÛrio de entrada, onde os arquivos .zip s„o monitorados.
-- `DirectoryOut`: O caminho para o diretÛrio de saÌda, onde os arquivos .txt extraÌdos ser„o movidos.
-- `IntervaloExecucao`: O intervalo de tempo, em milissegundos, entre as verificaÁıes de novos arquivos .zip no diretÛrio de entrada.
+- `DirectoryIn`: O caminho para o diret√≥rio de entrada, onde os arquivos .zip s√£o monitorados.
+- `DirectoryOut`: O caminho para o diret√≥rio de sa√≠da, onde os arquivos .txt extra√≠dos ser√£o movidos.
+- `IntervaloExecucao`: O intervalo de tempo, em milissegundos, entre as verifica√ß√µes de novos arquivos .zip no diret√≥rio de entrada.
 
 ## Como Usar
 
-1. Configure as opÁıes do programa no arquivo `appsettings.json`, especificando o caminho para o diretÛrio de entrada, o diretÛrio de saÌda e o intervalo de execuÁ„o.
+1. Configure as op√ß√µes do programa no arquivo `appsettings.json`, especificando o caminho para o diret√≥rio de entrada, o diret√≥rio de sa√≠da e o intervalo de execu√ß√£o.
 2. Execute o programa.
-3. O programa ir· verificar periodicamente o diretÛrio de entrada em busca de novos arquivos .zip.
-4. Quando um arquivo .zip compatÌvel for encontrado, ele ser· extraÌdo para o diretÛrio tempor·rio.
-5. Os arquivos .txt presentes dentro do arquivo .zip ser„o movidos para o diretÛrio de saÌda especificado.
-6. O arquivo .zip original ser· movido para a pasta "extraÌdos" dentro do diretÛrio de saÌda.
+3. O programa ir√° verificar periodicamente o diret√≥rio de entrada em busca de novos arquivos .zip.
+4. Quando um arquivo .zip compat√≠vel for encontrado, ele ser√° extra√≠do para o diret√≥rio tempor√°rio.
+5. Os arquivos .txt presentes dentro do arquivo .zip ser√£o movidos para o diret√≥rio de sa√≠da especificado.
+6. O arquivo .zip original ser√° movido para a pasta "extra√≠dos" dentro do diret√≥rio de sa√≠da.
 
-Certifique-se de ter a vers„o correta do .NET instalada e execute o programa usando o comando `dotnet run` no terminal.
+Certifique-se de ter a vers√£o correta do .NET instalada e execute o programa usando o comando `dotnet run` no terminal.
