@@ -87,23 +87,27 @@ namespace ExtratorZipZpl
             string directory = Path.GetDirectoryName(filePath);
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             string fileExtension = Path.GetExtension(filePath);
-            string newFileName = GetUniqueFileName(fileName);
+            string newFileName = GetUniqueFileName(directoryOutTxtEtiqueta,fileName);
             return Path.Combine(directory, newFileName + fileExtension);
         }
 
-        public string GetUniqueFileName(string fileName)
+        private string GetUniqueFileName(string directory, string fileName)
         {
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            string fileExtension = Path.GetExtension(fileName);
             string newFileName = fileName;
+
             int counter = 2;
 
             while (File.Exists(newFileName))
             {
-                newFileName = $"{fileName} ({counter})";
+                newFileName = Path.Combine(directory, $"{fileNameWithoutExtension} ({counter}){fileExtension}");
                 counter++;
             }
 
             return newFileName;
         }
+
 
         public void ClearDirectory(string directoryPath)
         {
