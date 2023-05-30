@@ -46,13 +46,12 @@ namespace FileExtractor
                     ZipFile.ExtractToDirectory(file, tempFolderPath);
                     Console.WriteLine("Extração concluída com sucesso.");
 
-                    // Move o arquivo extraído para o diretório de saída
-                    string extractedFileName = Path.GetFileName(file);
-                    string[] extractedFiles = Directory.GetFiles(tempFolderPath, "*", SearchOption.AllDirectories);
+                    // Obtém todos os arquivos .txt dentro do diretório temporário
+                    string[] txtFiles = Directory.GetFiles(tempFolderPath, "*.txt", SearchOption.AllDirectories);
 
-                    foreach (string extractedFile in extractedFiles)
+                    foreach (string txtFile in txtFiles)
                     {
-                        string relativePath = Path.GetRelativePath(tempFolderPath, extractedFile);
+                        string relativePath = Path.GetRelativePath(tempFolderPath, txtFile);
                         string destinationFilePath = Path.Combine(directoryOut, relativePath);
 
                         // Verifica se o arquivo já existe no diretório de saída
@@ -62,18 +61,18 @@ namespace FileExtractor
                             string fileExtension = Path.GetExtension(destinationFilePath);
                             string newFileName = GetUniqueFileName(fileName, fileExtension);
                             string newFilePath = Path.Combine(directoryOut, newFileName);
-                            File.Move(extractedFile, newFilePath);
+                            File.Move(txtFile, newFilePath);
                             Console.WriteLine($"Arquivo movido para o diretório de saída com o nome '{newFileName}'.");
                         }
                         else
                         {
-                            File.Move(extractedFile, destinationFilePath);
+                            File.Move(txtFile, destinationFilePath);
                             Console.WriteLine($"Arquivo movido para o diretório de saída com o nome '{Path.GetFileName(destinationFilePath)}'.");
                         }
                     }
 
                     // Move o arquivo .zip para a pasta "extraídos"
-                    string zipDestinationFilePath = Path.Combine(extractedFolderPath, extractedFileName);
+                    string zipDestinationFilePath = Path.Combine(extractedFolderPath, Path.GetFileName(file));
                     File.Move(file, zipDestinationFilePath);
                     Console.WriteLine($"Arquivo ZIP movido para a pasta 'extraídos' com o nome '{Path.GetFileName(zipDestinationFilePath)}'.");
 
